@@ -57,6 +57,9 @@ calendars = [
     "Family Events",
 ]
 
+# Generate org-babel analysis blocks in export (default: true)
+babel_analysis = true
+
 # Optional: rename calendars in the org export
 [display_names]
 "primary@gmail.com" = "Default"
@@ -101,8 +104,27 @@ The export produces a file like this:
 
 ```org
 * 2024
+** Analysis
+#+begin_src sqlite :db ~/calendar.db :results table :colnames yes
+SELECT c.summary as calendar,
+       ROUND(SUM(e.duration_minutes) / 60.0, 1) as hours
+FROM events e
+JOIN calendars c ON e.calendar_id = c.id
+WHERE e.start_time >= '2024-01-01' AND e.start_time < '2025-01-01'
+  AND e.all_day = 0
+GROUP BY c.summary
+ORDER BY hours DESC;
+#+end_src
 ** Nov
+*** Analysis
+#+begin_src sqlite :db ~/calendar.db :results table :colnames yes
+...
+#+end_src
 *** Week 46
+**** Analysis
+#+begin_src sqlite :db ~/calendar.db :results table :colnames yes
+...
+#+end_src
 **** [2024-11-14 Thu]
 ***** 09:00-09:30 [Work] Team Standup
 ***** 10:00-12:00 [Default] Deep Focus
@@ -111,6 +133,8 @@ The export produces a file like this:
 **** [2024-11-15 Fri]
 ***** [Family Events] Birthday Party
 ```
+
+Each year, month, and week heading includes an org-babel analysis block that sums hours per calendar for that period. Execute with `C-c C-c` in Emacs. Disable with `babel_analysis = false` in config.
 
 All-day events omit the time range. Calendar names appear in square brackets.
 
@@ -186,7 +210,7 @@ LIMIT 10;
 Add SQL blocks directly in your org files:
 
 ```org
-#+begin_src sql :db ~/calendar.db :results table :colnames yes
+#+begin_src sqlite :db ~/calendar.db :results table :colnames yes
 SELECT c.summary as calendar, ROUND(SUM(e.duration_minutes) / 60.0, 1) as hours
 FROM events e
 JOIN calendars c ON e.calendar_id = c.id

@@ -4,6 +4,7 @@ from pathlib import Path
 DEFAULT_CONFIG = {
     "sync_start": "2019-01-01",
     "calendars": [],
+    "babel_analysis": True,
 }
 
 
