@@ -7,7 +7,7 @@ from .export import export_org
 from .sync import sync_all
 
 
-@click.group()
+@click.group(chain=True)
 @click.option("--db-path", default="calendar.db", help="Path to SQLite database")
 @click.option("--config", default=None, help="Path to config file")
 @click.pass_context

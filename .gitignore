@@ -11,6 +11,8 @@ calendar.db
 calendar.db-wal
 calendar.db-shm
 calendar.org
+trends.png
+*.log
 
 # IDE
 .idea/
